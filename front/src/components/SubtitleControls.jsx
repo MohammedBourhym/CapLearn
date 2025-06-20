@@ -1,7 +1,11 @@
 import { useState } from 'react';
+import { DocumentTextIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
+import ExportSubtitles from './ExportSubtitles';
+import LoadingSpinner from './LoadingSpinner';
 
-function SubtitleControls({ onSubtitlesUpload, onGenerateSubtitles, onDownloadSubtitles }) {
+function SubtitleControls({ subtitles, onSubtitlesUpload, onGenerateSubtitles }) {
   const [isGenerating, setIsGenerating] = useState(false);
+  const [showExport, setShowExport] = useState(false);
 
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
@@ -86,38 +90,77 @@ function SubtitleControls({ onSubtitlesUpload, onGenerateSubtitles, onDownloadSu
   };
 
   return (
-    <div className="flex flex-wrap gap-3 p-4 bg-white dark:bg-gray-800 rounded-lg shadow">
-      <div>
-        <label htmlFor="subtitleFile" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-          Upload Subtitles
-        </label>
-        <input
-          type="file"
-          id="subtitleFile"
-          accept=".srt,.vtt"
-          onChange={handleFileUpload}
-          className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-        />
+    <div className="p-4 bg-white dark:bg-gray-900 rounded-lg shadow-lg border border-gray-200 dark:border-gray-800 transition-colors">
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="text-lg font-medium text-gray-900 dark:text-white">Subtitle Options</h3>
+        <button
+          onClick={() => setShowExport(!showExport)}
+          disabled={!subtitles || !subtitles.segments}
+          className={`flex items-center px-3 py-1.5 rounded-md text-sm transition-colors ${
+            !subtitles || !subtitles.segments 
+              ? 'bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed' 
+              : 'bg-blue-600 text-white hover:bg-blue-700'
+          }`}
+        >
+          <DocumentTextIcon className="h-4 w-4 mr-1" />
+          {showExport ? 'Hide Export' : 'Export Options'}
+        </button>
       </div>
       
-      <button
-        onClick={handleGenerateSubtitles}
-        disabled={isGenerating}
-        className={`px-4 py-2 rounded-md text-white ${
-          isGenerating ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700'
-        }`}
-      >
-        {isGenerating ? 'Generating...' : 'Generate Subtitles'}
-      </button>
+      {showExport && <ExportSubtitles subtitles={subtitles} />}
       
-      <button
-        onClick={onDownloadSubtitles}
-        className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-      >
-        Download Subtitles
-      </button>
+      <div className="mt-4 grid gap-4 sm:grid-cols-2">
+        <div>
+          <label htmlFor="subtitleFile" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            Upload Subtitles
+          </label>
+          <div className="flex">
+            <input
+              type="file"
+              id="subtitleFile"
+              accept=".srt,.vtt"
+              onChange={handleFileUpload}
+              className="block w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 dark:file:bg-blue-900/30 dark:file:text-blue-300 hover:file:bg-blue-100 dark:hover:file:bg-blue-800/40 border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 focus:outline-none"
+            />
+          </div>
+          <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+            Supports .srt and .vtt subtitle files
+          </p>
+        </div>
+        
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            Generate Subtitles
+          </label>
+          <button
+            onClick={handleGenerateSubtitles}
+            disabled={isGenerating}
+            className={`w-full flex items-center justify-center px-4 py-2 rounded-md text-white transition-colors ${
+              isGenerating 
+                ? 'bg-gray-400 dark:bg-gray-600 cursor-not-allowed' 
+                : 'bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-600'
+            }`}
+          >
+            {isGenerating ? (
+              <>
+                <LoadingSpinner size="small" color="white" />
+                <span className="ml-2">Generating...</span>
+              </>
+            ) : (
+              <>
+                <ArrowPathIcon className="h-4 w-4 mr-1" />
+                Generate New Subtitles
+              </>
+            )}
+          </button>
+          <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+            Use AI to create new subtitles from the video audio
+          </p>
+        </div>
+      </div>
     </div>
   );
 }
 
 export default SubtitleControls;
+
