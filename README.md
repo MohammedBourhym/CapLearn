@@ -2,7 +2,7 @@
 
 CapLearn is an application designed to help users learn languages through video content. It processes videos from YouTube or direct uploads, generates subtitles, and provides an interactive interface for vocabulary building and comprehension.
 
-![CapLearn Demo](./front/public/vite.svg)
+![CapLearn Demo](Demo.png)
 
 ## Features
 
