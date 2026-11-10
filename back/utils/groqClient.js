@@ -5,6 +5,10 @@ import fs from 'fs';
 const GROQ_API_KEY = process.env.GROQ_API_KEY;
 const GROQ_API_URL = 'https://api.groq.com/openai/v1/audio/transcriptions';
 
+if (!GROQ_API_KEY) {
+  throw new Error('GROQ_API_KEY environment variable is required');
+}
+
 export async function transcribeAudioWithGroq(audioFilePath) {
   try {
     const form = new FormData();
